@@ -114,7 +114,7 @@ Capstone_WilliamJonathan/
 
 1. Clone the repo  
 ```bash
-git clone https://github.com/your-username/F1-Strategy-LMS.git
+git clone https://github.com/williamjonathanliem/F1_LMS.git
 cd F1-Strategy-LMS
 ```
 
