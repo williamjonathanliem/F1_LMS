@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>F1 Strategy LMS</title>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #0a0a0a; color: #f5f5f5; font-family: 'Orbitron', sans-serif; }
+    .navbar { background-color: #111; }
+    .hero { text-align: center; padding: 100px 20px; background: linear-gradient(to right, #e10600, #111); }
+    .card { background-color: #1a1a1a; color: #f5f5f5; border: none; }
+    .progress { height: 20px; }
+  </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-danger" href="#">
+        <img src="public/F1-Logo.png" alt="F1 LMS Logo" width="40" height="20" class="me-2">
+        F1 LMS
+      </a>
+      <div>
+        <a href="#courses" class="nav-link d-inline text-white">Courses</a>
+        <a href="#simulator" class="nav-link d-inline text-white">Simulator</a>
+        <a href="#dashboard" class="nav-link d-inline text-white">Dashboard</a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero -->
+  <section class="hero text-white">
+    <h1>Be the 13th F1 Team</h1>
+    <p>Learn race strategy by simulation</p>
+    <a href="#courses" class="btn btn-danger btn-lg">Start Learning</a>
+  </section>
+
+  <!-- Courses -->
+  <section id="courses" class="container py-5">
+    <h2 class="mb-4">Courses</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card p-3">
+          <h5>Module 1: Team Foundations</h5>
+          <p>Understand engines, roles, and basics of F1 strategy.</p>
+          <a href="#lesson" class="btn btn-outline-danger">View Lesson</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3">
+          <h5>Module 2: Tire Management</h5>
+          <p>Learn how Soft, Medium, and Hard compounds change your race.</p>
+          <a href="#lesson" class="btn btn-outline-danger">View Lesson</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Simulator -->
+  <section id="simulator" class="container py-5">
+    <h2 class="mb-4">Race Simulator</h2>
+    <form>
+        <div class="mb-3">
+        <label class="form-label">Engine Setup</label>
+        <select id="engine" class="form-select">
+            <option>Balanced</option>
+            <option>Power-focused</option>
+            <option>Reliability-focused</option>
+        </select>
+        </div>
+        <div class="mb-3">
+        <label class="form-label">Tire Strategy</label>
+        <select id="tires" class="form-select">
+            <option>1-stop (Medium → Hard)</option>
+            <option>2-stop (Medium → Medium → Soft)</option>
+        </select>
+        </div>
+        <div class="mb-3">
+        <label class="form-label">Driver Aggression</label>
+        <input id="aggression" type="range" class="form-range" min="1" max="10">
+        </div>
+        <button id="runSim" type="button" class="btn btn-danger">Run Simulation</button>
+    </form>
+    <div class="mt-4">
+        <h5>Results</h5>
+        <p id="sim-results">No results yet. Run a simulation!</p>
+    </div>
+  </section>
+
+
+  <!-- Dashboard -->
+  <section id="dashboard" class="container py-5">
+    <h2 class="mb-4">Dashboard</h2>
+    <p>Modules Completed:</p>
+    <div class="progress mb-3">
+      <div class="progress-bar bg-danger" style="width: 40%">40%</div>
+    </div>
+    <p>Achievements: <span class="badge bg-danger">Beginner Strategist</span></p>
+  </section>
+
+    <!-- Quiz -->
+    <section id="quiz" class="container py-5">
+    <h2 class="mb-4">Quick Quiz</h2>
+    <p>Q: Which tire compound degrades fastest?</p>
+    <input type="radio" name="q1" value="Hard"> Hard <br>
+    <input type="radio" name="q1" value="Medium"> Medium <br>
+    <input type="radio" name="q1" value="Soft"> Soft <br>
+    <button onclick="checkQuiz()" class="btn btn-danger mt-2">Submit</button>
+    <p id="quiz-result"></p>
+  </section>
+  
+  <script>
+    // Quiz
+    function checkQuiz() {
+      let answer = document.querySelector('input[name="q1"]:checked');
+      if (!answer) {
+        document.getElementById("quiz-result").innerText = "⚠️ Please select an option.";
+        return;
+      }
+      if (answer.value === "Soft") {
+        document.getElementById("quiz-result").innerText = "✅ Correct! Soft tires degrade the fastest.";
+        updateProgress(20); // +20% progress
+      } else {
+        document.getElementById("quiz-result").innerText = "❌ Incorrect. Try again!";
+      }
+    }
+  
+    // Mini Simulation
+    document.getElementById("runSim").addEventListener("click", function() {
+    let engine = document.getElementById("engine").value;
+    let tires = document.getElementById("tires").value;
+    let aggr = document.getElementById("aggression").value;
+
+    let baseTime = 90;
+    let results = [];
+
+    for (let i = 1; i <= 5; i++) {
+        let lapTime = baseTime + i * 0.2 + aggr * 0.15 + (Math.random() * 0.5);
+        results.push(`Lap ${i}: ${lapTime.toFixed(2)}s`);
+    }
+
+    document.getElementById("sim-results").innerHTML = results.join("<br>");
+    updateProgress(10); // +10% progress for running sim
+    });
+
+    // Dashboard Progress (localStorage)
+    function updateProgress(amount) {
+      let progressBar = document.querySelector(".progress-bar");
+      let current = parseInt(progressBar.getAttribute("data-progress") || 40);
+      let newProgress = Math.min(current + amount, 100);
+      progressBar.style.width = newProgress + "%";
+      progressBar.innerText = newProgress + "%";
+      progressBar.setAttribute("data-progress", newProgress);
+      localStorage.setItem("progress", newProgress);
+    }
+  
+    // Load saved progress
+    window.onload = function() {
+      let saved = localStorage.getItem("progress");
+      if (saved) {
+        let progressBar = document.querySelector(".progress-bar");
+        progressBar.style.width = saved + "%";
+        progressBar.innerText = saved + "%";
+        progressBar.setAttribute("data-progress", saved);
+      }
+    }
+  </script>
+</body>
+</html>
